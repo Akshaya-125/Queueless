@@ -1,0 +1,19 @@
+# secrets
+.env
+k8s/secret.yaml
+*.pem
+*.key
+
+# build output / local data
+target/
+data/
+*.db
+node_modules/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+.mvn/wrapper/maven-wrapper.jar

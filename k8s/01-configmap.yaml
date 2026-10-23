@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: queueless-config
+  namespace: queueless
+data:
+  DB_NAME: "queueless"
+  DB_USER: "queueless"
+  DB_URL: "jdbc:mysql://mysql:3306/queueless?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+  ADMIN_EMAIL: "admin@queueless.local"
+  APP_TIMEZONE: "Asia/Kolkata"

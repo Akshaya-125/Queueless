@@ -1,0 +1,61 @@
+# QueueLess - run everything locally:   docker compose up -d --build
+# Requires a .env file (copy .env.example to .env and fill in the placeholders).
+name: queueless
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: queueless-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-queueless}
+      MYSQL_USER: ${DB_USER:-queueless}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
+    volumes:
+      - mysql_data:/var/lib/mysql        # data survives container restarts
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  backend:
+    build: ./backend
+    image: queueless-backend:1.0
+    container_name: queueless-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy       # waits until MySQL really answers
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/${DB_NAME:-queueless}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USER: ${DB_USER:-queueless}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env (32+ characters)}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@queueless.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Kolkata}
+    ports:
+      - "8081:8081"                      # optional: lets Postman call the API directly
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  frontend:
+    build: ./frontend
+    image: queueless-frontend:1.0
+    container_name: queueless-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+
+volumes:
+  mysql_data:
