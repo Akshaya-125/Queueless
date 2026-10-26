@@ -167,13 +167,17 @@ ER summary: `users 1—* queue_tokens *—1 service_counters`; unique `(service_
 docker compose up -d --build                      # application must be running
 cd selenium-tests
 $env:ADMIN_PASSWORD = "<same value as in .env>"   # optional: $env:BASE_URL = "http://localhost:8080"
-mvn test                                          # Selenium Manager downloads ChromeDriver automatically
-$env:HEADLESS = "false"; mvn test                 # watch the browser
+mvnw.cmd test                                     # Selenium Manager downloads ChromeDriver automatically
+$env:HEADLESS = "false"; .\mvnw.cmd test                 # watch the browser
 ```
 
-(`mvn` must be installed for this module, or copy the `mvnw` files from `backend/`.)
+(Use `mvnw.cmd test` in Command Prompt; the Maven wrapper is included, no separate Maven install needed.)
 
-## 9. Jenkins (local, in Docker)
+## 9. Jenkins
+
+**A. Your own Jenkins on Windows (default `Jenkinsfile`, uses `bat`/PowerShell).** The Windows account running Jenkins needs Git, JDK 17+ and Docker Desktop (`docker ps` must work for that account; if Jenkins runs as a Windows service, set its *Log On* account to your user and add that user to the `docker-users` group). Add the credentials below, create a Pipeline job from SCM with script path `Jenkinsfile`, then *Build with Parameters*. Extra credential for Selenium only: *Secret text* with ID `queueless-admin-password`.
+
+**B. Jenkins in Docker (Linux pipeline: `jenkins/Jenkinsfile.linux`)** – use this only if you do not have your own Jenkins; set the job's script path to `jenkins/Jenkinsfile.linux`.
 
 ```powershell
 docker compose -f jenkins/compose.yaml up -d --build
