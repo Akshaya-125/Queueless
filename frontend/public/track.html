@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track token · QueueLess</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header id="nav" class="nav"></header>
+<main id="main" class="container narrow">
+  <h1>Track your token</h1>
+  <div id="track-loading" class="loading"><span class="spinner"></span>Loading…</div>
+  <div id="track-empty" class="card empty" hidden>You have no active token. <a href="book.html">Book one now</a>.</div>
+  <div id="track-card" class="card" hidden>
+    <div class="token-big">
+      <div class="svc" id="token-service"></div>
+      <div class="number" id="token-number" data-testid="token-number"></div>
+      <div style="margin-top:.7rem"><span id="token-status" data-testid="token-status" class="badge"></span></div>
+      <p class="muted" id="status-hint" style="margin-top:.6rem"></p>
+    </div>
+    <div class="kv">
+      <div><div class="k">Queue position</div><div class="v" id="token-position" data-testid="token-position">—</div></div>
+      <div><div class="k">Estimated wait (approximate)</div><div class="v" id="token-eta">—</div></div>
+      <div><div class="k">Booked</div><div class="v small" id="token-created">—</div></div>
+      <div><div class="k">Last updated</div><div class="v small" id="token-updated">—</div></div>
+    </div>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn btn-ghost" id="refresh-btn" type="button">Refresh now</button>
+      <button class="btn btn-danger" id="cancel-btn" type="button" data-testid="cancel-btn" hidden>Cancel token</button>
+    </div>
+    <p class="muted small" style="margin-top:.8rem">This page refreshes automatically every 5 seconds while your token is active. The waiting-time estimate is based on recent service times and may change.</p>
+  </div>
+</main>
+<footer class="footer">QueueLess · Smart Queue and Token Management · College DevOps case study</footer>
+<div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/track.js"></script>
+</body>
+</html>
